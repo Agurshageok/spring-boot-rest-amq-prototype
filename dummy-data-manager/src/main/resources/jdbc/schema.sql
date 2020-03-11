@@ -1,0 +1,7 @@
+CREATE TABLE DTO
+(
+	ID int  NOT NULL PRIMARY KEY,
+	HEADERS varchar(255),
+	DETAILS varchar(255),
+	POM_OPERATION_ID varchar(255)
+);

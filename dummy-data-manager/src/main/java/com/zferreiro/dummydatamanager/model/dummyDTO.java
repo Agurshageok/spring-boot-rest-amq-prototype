@@ -33,4 +33,12 @@ public class dummyDTO implements Serializable {
     public void setDetails(LinkedHashMap<String, Object> details) {
         this.details = details;
     }
+
+    @Override
+    public String toString() {
+        return "dummyDTO{" +
+                "header=" + header +
+                ", details=" + details +
+                '}';
+    }
 }

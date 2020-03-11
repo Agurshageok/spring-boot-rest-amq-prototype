@@ -2,6 +2,8 @@ package com.zferreiro.dummyreceiver.controller;
 
 import com.zferreiro.dummyreceiver.model.dummyDTO;
 import org.apache.activemq.ActiveMQSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +25,17 @@ public class PublisherController {
 @Autowired
     private JmsTemplate jmsTemplate;
 
-@Autowired
-    MessageConverter jsonJmsMessageConverter;
-
 @GetMapping("/{msg}")
     public ResponseEntity<String> publish(@PathVariable("msg") String msg){
     jmsTemplate.convertAndSend(queue, msg);
     return new ResponseEntity<>(msg, HttpStatus.OK);
 }
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @GetMapping("/json/{msg}")
     @ResponseBody
     public dummyDTO publishJson(@PathVariable("msg") String msg){
-    jmsTemplate.setMessageConverter(jsonJmsMessageConverter);
     dummyDTO dto = new dummyDTO();
     dto.getDetails().put("Mensaje", msg);
     dto.getHeader().put("TimeStamp", LocalDateTime.now().toString());
