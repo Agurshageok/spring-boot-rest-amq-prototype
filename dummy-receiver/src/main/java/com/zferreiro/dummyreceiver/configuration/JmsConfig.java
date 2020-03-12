@@ -11,6 +11,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
+import org.springframework.web.client.RestTemplate;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -20,20 +21,15 @@ public class JmsConfig {
 
     @Value("${activemq.test.queue}")
     private String QueueName;
+
     @Bean
     public Queue queue(){
         return new ActiveMQQueue(QueueName);
     }
-
-//    @Bean
-//    public JmsTemplate jmsTemplateCustom(){
-//        JmsTemplate jms = new JmsAutoConfiguration();
-//        jms.setMessageConverter(jsonJmsMessageConverter());
-//        jms.setConnectionFactory(JmsAutoConfiguration);
-//        return jms;
-//    }
-
-
+    @Bean
+    public Queue receiverQueue(){
+        return new ActiveMQQueue("response-queue");
+    }
 
     @Bean // Serialize message content to json using TextMessage
     public MessageConverter jsonJmsMessageConverter() {
@@ -41,6 +37,10 @@ public class JmsConfig {
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         return converter;
+    }
+
+    @Bean public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 
 }

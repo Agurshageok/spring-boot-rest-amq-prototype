@@ -21,7 +21,7 @@ public class MessageConsumer {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @JmsListener(destination = "response-queue")
+//    @JmsListener(destination = "response-queue")
     public void listener(ActiveMQTextMessage msg) throws JMSException, JsonProcessingException {
         String timestamp = LocalDateTime.now().toString();
         logger.info("Message Received -[ {} ]-", msg.getText());

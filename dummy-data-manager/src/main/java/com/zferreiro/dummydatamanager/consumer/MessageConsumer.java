@@ -40,13 +40,12 @@ public class MessageConsumer {
 
     @JmsListener(destination = "${activemq.name.tolisten}")
     public void listener(ActiveMQTextMessage msg) throws JMSException, JsonProcessingException {
-        String timestamp = LocalDateTime.now().toString();
         dummyDTO msg2  = mapper.readValue(msg.getText(), dummyDTO.class);
         msg2.getDetails().put("data_manager", "passed on data manager");
         msg2.getHeader().put("added_on_data_manager", "true");
         int result = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM DTO", Integer.class);
         int id = result +1;
-        int result1 = jdbcTemplate.update("INSERT INTO DTO VALUES (?, ?, ?, ?)", id, msg2.getDetails().toString(), msg2.getHeader().toString(), getPOMOperationId(id));
+        jdbcTemplate.update("INSERT INTO DTO VALUES (?, ?, ?, ?)", id, msg2.getDetails().toString(), msg2.getHeader().toString(), msg2.getHeader().get("POM_OP_ID"));
         List<Map<String, Object>> result3 = jdbcTemplate.queryForList("SELECT * FROM DTO");
         Map<String, Object> result2 = jdbcTemplate.queryForMap(query, id);
         dummyDTO dtos =  jdbcTemplate.queryForObject(query,new Object[]{id},new DTORowMapper());
@@ -55,14 +54,5 @@ public class MessageConsumer {
         logger.info("RowMapperResult: {}", dtos != null ? dtos.toString() : "No data found");
         producer.publish(msg2);
 
-    }
-
-    private String getPOMOperationId(int id) {
-        Integer uno = id;
-        Integer dos = id+1;
-        Integer tres = id+2;
-        Integer cuatro = id+3;
-        String ids =  uno.toString()+dos.toString()+tres.toString()+cuatro.toString();
-        return "0000"+ids+"abcd";
     }
 }
